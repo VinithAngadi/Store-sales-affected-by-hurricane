@@ -27,7 +27,7 @@ pred_store_sales_without_hurricane <- forecast(ets_fit_store, h = 4)
 
 pred_store_sales_without_hurricane
 
-plot(store_data_ts, col="blue", xlab="Year", ylab="Sales", main="Store Sales Forecast without hurricane", type='l')
+plot(store_data_ts, col="blue", xlab="Year", ylab="Sales (in $100,000)", main="Store Sales Forecast without hurricane", type='l')
 lines(pred_store_sales_without_hurricane$mean, col = 'red', lwd = 2)
 
 
@@ -71,7 +71,9 @@ store_sales_without_hurricane
 store_sales_with_hurricane
 
 plot(store_sales_without_hurricane, col="blue", xlab="Year", ylab="Sales", main="County Sales Forecast", type='l')
-lines(store_sales_with_hurricane, col = 'red', lwd = 2)
+lines(store_sales_with_hurricane, col = 'red', lwd = 1)
+legend(2016.67, 4.3, legend=c("Store sales with hurricane", "Store sales without hurricane"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
 
 
 # The shop would have made increased sales if it was functional after the hurricane as observed in the above values.

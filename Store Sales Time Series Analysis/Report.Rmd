@@ -45,7 +45,8 @@ pred_store_sales_without_hurricane <- forecast(ets_fit_store, h = 4)
 
 pred_store_sales_without_hurricane
 
-plot(store_data_ts, col="blue", xlab="Year", ylab="Sales", main="Store Sales Forecast without hurricane", type='l')
+plot(store_data_ts, col="blue", xlab="Year", ylab="Sales", 
+     main="Store Sales Forecast without hurricane", type='l')
 lines(pred_store_sales_without_hurricane$mean, col = 'red', lwd = 2)
 ```
 
@@ -57,7 +58,8 @@ ets_fit_county
 pred_county_without_hurricane <- forecast(ets_fit_county, h = 4)
 pred_county_without_hurricane
 
-plot(county_data_ts_plot, col="blue", xlab="Year", ylab="Sales", main="County Sales Forecast", type='l')
+plot(county_data_ts_plot, col="blue", xlab="Year", ylab="Sales",
+     main="County Sales Forecast", type='l')
 lines(pred_county_without_hurricane$mean, col = 'red', lwd = 2)
 ```
 
@@ -89,8 +91,11 @@ store_sales_without_hurricane
 #store sales forecast if shop made sales after the hurricane
 store_sales_with_hurricane
 
-plot(store_sales_without_hurricane, col="blue", xlab="Year", ylab="Sales", main="County Sales Forecast", type='l')
-lines(store_sales_with_hurricane, col = 'red', lwd = 2)
+plot(store_sales_without_hurricane, col="blue", xlab="Year", 
+     ylab="Sales", main="County Sales Forecast", type='l')
+lines(store_sales_with_hurricane, col = 'red', lwd = 1)
+legend(2016.67, 4.3, legend=c("Store sales with hurricane", "Store sales without hurricane"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
 ```
 
 # Conclusion
