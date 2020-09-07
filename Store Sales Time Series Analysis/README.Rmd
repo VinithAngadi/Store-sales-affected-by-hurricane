@@ -1,0 +1,98 @@
+---
+title: "Store Sales Forecasting"
+author: "Vinith Angadi"
+date: "9/6/2020"
+output: pdf_document
+---
+
+## Store Sales Forecasting
+
+The Carlson Department Store suffered heavy damage when a hurricane struck on August 31. The store was closed for four months (September through December), and Carlson is now involved in a dispute with its insurance company about the amount of lost sales during the time the store was closed. Two key issues must be resolved: 
+(1) the amount of sales Carlson would have made if the hurricane had not struck.
+(2) whether Carlson is entitled to any compensation for excess sales due to increased business activity after the storm. More than $8 billion in federal disaster relief and insurance money came into the county, resulting in increased sales at department stores and numerous other businesses.
+The Table below gives Carlson’s sales data for the 48 months preceding the storm. It also reports the total sales for the 48 months preceding the storm for all department stores in the county, as well as the total sales in the county for the four months the Carlson Department Store was closed. Carlson’s managers asked you to analyze the data and develop estimates of the lost sales at the Carlson Department Store for the months of September through December. They also asked you to determine whether a case can be made for excess storm-related sales during the same period. If such a case can be made, Carlson is entitled to compensation for excess sales it would have earned in addition to ordinary sales.
+
+```{r Load data}
+library(expsmooth)
+library(forecast)
+
+
+data_csv <- read.csv('sales_data.csv')
+
+store_data_csv <- data_csv['Store.data']
+county_data_csv <- data_csv['County.data']
+```
+## Convert data frame to time series format 
+
+```{r convert data}
+store_data_ts <- ts(store_data_csv[1:52,], frequency = 12, start = c(2012, 9))
+store_data_ts
+
+county_data_ts_plot <- ts(county_data_csv[1:52,], frequency = 12, start = c(2012, 9))
+county_data_ts_plot
+
+county_data_ts <- ts(county_data_csv[1:48,], frequency = 12, start = c(2012, 9))
+county_data_ts
+```
+
+# Forecast store sales using exponential smoothing
+```{r Forecast store sales}
+ets_fit_store <- ets(store_data_ts)
+
+summary(ets_fit_store)
+
+pred_store_sales_without_hurricane <- forecast(ets_fit_store, h = 4)
+
+pred_store_sales_without_hurricane
+
+plot(store_data_ts, col="blue", xlab="Year", ylab="Sales", main="Store Sales Forecast without hurricane", type='l')
+lines(pred_store_sales_without_hurricane$mean, col = 'red', lwd = 2)
+```
+
+# Forecast county sales without hurricane
+```{r Forecast county sales}
+ets_fit_county <- ets(county_data_ts)
+ets_fit_county
+
+pred_county_without_hurricane <- forecast(ets_fit_county, h = 4)
+pred_county_without_hurricane
+
+plot(county_data_ts_plot, col="blue", xlab="Year", ylab="Sales", main="County Sales Forecast", type='l')
+lines(pred_county_without_hurricane$mean, col = 'red', lwd = 2)
+```
+
+# Forecast store sales with hurricane
+```{r Forecast stoore sales with hurricane}
+county_sales_without_hurricane <- pred_county_without_hurricane$mean
+county_sales_without_hurricane
+
+store_sales_without_hurricane <- pred_store_sales_without_hurricane$mean
+store_sales_without_hurricane
+
+county_sales_with_hurricane <- ts(county_data_csv[49:52,], frequency = 12, start = c(2016, 9))
+county_sales_with_hurricane
+
+
+county_sales_ratio <- county_sales_with_hurricane/county_sales_without_hurricane
+county_sales_ratio
+
+store_sales_with_hurricane <- store_sales_without_hurricane * county_sales_ratio
+
+store_sales_with_hurricane
+```
+
+
+# Store sales forecast if there was no hurricane
+```{r Store sales forecast if there was no hurricane}
+store_sales_without_hurricane
+
+#store sales forecast if shop made sales after the hurricane
+store_sales_with_hurricane
+
+plot(store_sales_without_hurricane, col="blue", xlab="Year", ylab="Sales", main="County Sales Forecast", type='l')
+lines(store_sales_with_hurricane, col = 'red', lwd = 2)
+```
+
+# Conclusion
+## The shop would have made increased sales if it was functional after the hurricane as observed in the above values.
+## Hence, Carlson stores is entitled to compensation for excess sales due to increased business activity after the storm.
